@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YOLO Object Detection</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/static/style.css?v=2" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1><i class="fas fa-eye"></i> YOLO Object Detection</h1>
+      <p class="description">
+        This tool uses the YOLO model to detect and highlight objects in images
+        and videos. Choose a model type for either faster speed or higher
+        accuracy.
+      </p>
+
+      <!-- Upload Area -->
+      <div class="upload-area" id="upload-area">
+        <div class="upload-content">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>Drag & drop or click to upload</p>
+          <small class="upload-hint">Upload an image or video file</small>
+          <p id="file-info" class="file-info"></p>
+          <input type="file" id="file-input" accept="image/*,video/*" />
+        </div>
+      </div>
+
+      <!-- Controls (Model selection + detect + reset) -->
+      <div class="controls">
+        <!-- Model Selector -->
+        <div class="select-wrapper">
+          <select id="model-select">
+            <option value="n">Fast (Nano)</option>
+            <option value="s" selected>Balanced (Small)</option>
+            <option value="m">Accurate (Medium)</option>
+          </select>
+          <i class="fas fa-chevron-down"></i>
+        </div>
+
+        <!-- Detect Button -->
+        <button id="detect-btn" class="detect-btn">
+          <i class="fas fa-search"></i> Detect Objects
+        </button>
+
+        <!-- Reset Button -->
+        <button id="reset-btn" class="reset-btn">
+          <i class="fas fa-rotate-left"></i> Reset
+        </button>
+      </div>
+
+      <!-- Status Message -->
+      <div id="status" class="status" style="display: none"></div>
+
+      <!-- Output Preview -->
+      <div class="results">
+        <img id="preview" alt="Detection result" />
+        <video id="video-preview" controls></video>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/script.js"></script>
+  </body>
+</html>
