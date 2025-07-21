@@ -4,12 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const uploadArea = document.getElementById("upload-area");
   const detectBtn = document.getElementById("detect-btn");
   const resetBtn = document.getElementById("reset-btn");
-  const modelSelect = document.getElementById("model-select");
+  const detectionTypeSelect = document.getElementById("detection-type-select");
   const preview = document.getElementById("preview");
-  const videoPreview = document.getElementById("video-preview");
+  const jsonResults = document.getElementById("json-results");
+  const jsonContent = document.getElementById("json-content");
   const statusDiv = document.getElementById("status");
-
-  let currentStreamUrl = "";
 
   // ========= Upload Area Interactions =========
   uploadArea.addEventListener("click", () => fileInput.click());
@@ -43,23 +42,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!file) return;
 
-    const isVideo = file.type.includes("video");
-
     preview.style.display = "none";
-    videoPreview.style.display = "none";
+    jsonResults.style.display = "none";
     preview.src = "";
-    videoPreview.src = "";
 
     const url = URL.createObjectURL(file);
-
-    if (isVideo) {
-      videoPreview.src = url;
-      videoPreview.style.display = "block";
-      videoPreview.load();
-    } else {
-      preview.src = url;
-      preview.style.display = "block";
-    }
+    preview.src = url;
+    preview.style.display = "block";
   }
 
   // ========= Detect Button Logic =========
@@ -72,8 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     uploadArea.style.display = "none";
 
     const file = fileInput.files[0];
-    const isVideo = file.type.includes("video");
-    const model = modelSelect.value;
+    const detectionType = detectionTypeSelect.value;
 
     detectBtn.innerHTML =
       '<i class="fas fa-spinner fa-spin"></i> Processing...';
@@ -84,7 +72,26 @@ document.addEventListener("DOMContentLoaded", () => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch(`/detect?model=${model}`, {
+      let endpoint;
+      let isJsonResponse = false;
+
+      // Determine endpoint based on detection type
+      switch (detectionType) {
+        case "ingredient":
+          endpoint = "/detect/ingredient";
+          break;
+        case "nutrition":
+          endpoint = "/detect/nutrition";
+          break;
+        case "both":
+          endpoint = "/detect/both";
+          isJsonResponse = true;
+          break;
+        default:
+          throw new Error("Invalid detection type");
+      }
+
+      const response = await fetch(endpoint, {
         method: "POST",
         body: formData,
       });
@@ -93,26 +100,24 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(await response.text());
       }
 
-      if (isVideo) {
+      if (isJsonResponse) {
+        // Handle JSON response for "both" detection
         const data = await response.json();
-        if (!data.stream_url) throw new Error("Stream URL not found");
-
-        currentStreamUrl = data.stream_url;
-        preview.src = currentStreamUrl;
-        preview.style.display = "block";
-
-        videoPreview.pause();
-        videoPreview.src = "";
-        videoPreview.style.display = "none";
-
-        showStatus("Streaming started...", "success");
+        
+        // Hide image preview and show JSON results
+        preview.style.display = "none";
+        jsonResults.style.display = "block";
+        jsonContent.textContent = JSON.stringify(data, null, 2);
+        
+        showStatus("Detection completed! Check results below.", "success");
       } else {
+        // Handle image response for single detection
         const blob = await response.blob();
         const detectedURL = URL.createObjectURL(blob);
 
         preview.src = detectedURL;
         preview.style.display = "block";
-        videoPreview.style.display = "none";
+        jsonResults.style.display = "none";
 
         showStatus("Detection completed!", "success");
       }
@@ -120,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error(error);
       showStatus(error.message, "error");
     } finally {
-      detectBtn.innerHTML = '<i class="fas fa-search"></i> Detect Objects';
+      detectBtn.innerHTML = '<i class="fas fa-search"></i> Detect';
       detectBtn.disabled = false;
     }
   });
@@ -129,12 +134,10 @@ document.addEventListener("DOMContentLoaded", () => {
   resetBtn.addEventListener("click", () => {
     fileInput.value = "";
     preview.src = "";
-    videoPreview.src = "";
     preview.style.display = "none";
-    videoPreview.style.display = "none";
+    jsonResults.style.display = "none";
     statusDiv.style.display = "none";
     uploadArea.style.display = "block"; // Show upload area again
-    currentStreamUrl = "";
     document.getElementById("file-info").textContent = "";
   });
 
@@ -148,6 +151,5 @@ document.addEventListener("DOMContentLoaded", () => {
   // ========= Cleanup on Unload =========
   window.addEventListener("beforeunload", () => {
     if (preview.src) URL.revokeObjectURL(preview.src);
-    if (videoPreview.src) URL.revokeObjectURL(videoPreview.src);
   });
 });

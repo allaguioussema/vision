@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>YOLO Object Detection</title>
+    <title>Custom Detection API - Ingredient & Nutrition Detection</title>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="/static/style.css?v=2" />
+    <link rel="stylesheet" href="/static/style.css?v=3" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -15,11 +15,10 @@
 
   <body>
     <div class="container">
-      <h1><i class="fas fa-eye"></i> YOLO Object Detection</h1>
+      <h1><i class="fas fa-search"></i> Custom Detection API</h1>
       <p class="description">
-        This tool uses the YOLO model to detect and highlight objects in images
-        and videos. Choose a model type for either faster speed or higher
-        accuracy.
+        Advanced ingredient and nutrition table detection using custom YOLO models. 
+        Choose your detection type to analyze food products and nutritional information.
       </p>
 
       <!-- Upload Area -->
@@ -27,27 +26,27 @@
         <div class="upload-content">
           <i class="fas fa-cloud-upload-alt"></i>
           <p>Drag & drop or click to upload</p>
-          <small class="upload-hint">Upload an image or video file</small>
+          <small class="upload-hint">Upload an image file (JPG, PNG, JPEG)</small>
           <p id="file-info" class="file-info"></p>
-          <input type="file" id="file-input" accept="image/*,video/*" />
+          <input type="file" id="file-input" accept="image/*" />
         </div>
       </div>
 
-      <!-- Controls (Model selection + detect + reset) -->
+      <!-- Controls (Detection type + detect + reset) -->
       <div class="controls">
-        <!-- Model Selector -->
+        <!-- Detection Type Selector -->
         <div class="select-wrapper">
-          <select id="model-select">
-            <option value="n">Fast (Nano)</option>
-            <option value="s" selected>Balanced (Small)</option>
-            <option value="m">Accurate (Medium)</option>
+          <select id="detection-type-select">
+            <option value="ingredient">Ingredients Only</option>
+            <option value="nutrition">Nutrition Tables Only</option>
+            <option value="both" selected>Both Ingredients & Nutrition</option>
           </select>
           <i class="fas fa-chevron-down"></i>
         </div>
 
         <!-- Detect Button -->
         <button id="detect-btn" class="detect-btn">
-          <i class="fas fa-search"></i> Detect Objects
+          <i class="fas fa-search"></i> Detect
         </button>
 
         <!-- Reset Button -->
@@ -62,7 +61,10 @@
       <!-- Output Preview -->
       <div class="results">
         <img id="preview" alt="Detection result" />
-        <video id="video-preview" controls></video>
+        <div id="json-results" class="json-results" style="display: none">
+          <h3>Detection Results</h3>
+          <pre id="json-content"></pre>
+        </div>
       </div>
     </div>
 

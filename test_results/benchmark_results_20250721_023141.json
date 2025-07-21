@@ -1,0 +1,27 @@
+{
+  "timestamp": "20250721_023141",
+  "benchmarks": {
+    "ingredient": {
+      "model_type": "ingredient",
+      "avg_inference_time": 0.46601645946502684,
+      "min_inference_time": 0.45521998405456543,
+      "max_inference_time": 0.5176160335540771,
+      "avg_detections": 0.0,
+      "total_images": 20,
+      "successful_detections": 20,
+      "failed_detections": 0,
+      "memory_usage_mb": null
+    },
+    "nutrition": {
+      "model_type": "nutrition",
+      "avg_inference_time": 0.3530142903327942,
+      "min_inference_time": 0.34853148460388184,
+      "max_inference_time": 0.35869598388671875,
+      "avg_detections": 0.0,
+      "total_images": 20,
+      "successful_detections": 20,
+      "failed_detections": 0,
+      "memory_usage_mb": null
+    }
+  }
+}
